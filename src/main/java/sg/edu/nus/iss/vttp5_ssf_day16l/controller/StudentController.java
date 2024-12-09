@@ -31,8 +31,8 @@ public class StudentController {
 
     @PostMapping("/create")
     public String postCreateStudent(@ModelAttribute Student student){
-        ResponseEntity<String> responseEntity = studentService.createApiStudent(student);
-        System.out.println("\n\n\n\n" + responseEntity.getBody() + "\n\n\n\n");
+        String response = studentService.createApiStudent(student);
+        System.out.println("\n\n\n\n" + response + "\n\n\n\n");
         return "redirect:/student/studentList";
     }
 

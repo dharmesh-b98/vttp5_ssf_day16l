@@ -24,52 +24,50 @@ public class StudentService { //getting info from the restcontroller
     
     RestTemplate restTemplate = new RestTemplate();
 
-    public ResponseEntity<String> createApiStudent(Student student){
+    public String createApiStudent(Student student){
+
         JsonObjectBuilder jab = Json.createObjectBuilder();
-        
-        jab.add("id",student.getId())
+        jab.add("id", student.getId())
             .add("fullName", student.getFullName())
             .add("email", student.getEmail())
             .add("phoneNumber", student.getPhoneNumber());
+        JsonObject studentJsonObject = jab.build();
+        
+        String studentJsonObjectString = studentJsonObject.toString();
 
-        JsonObject jObject = jab.build();
-
-        RequestEntity<String> request = RequestEntity.post("http://localhost:3000/api/student/create")
+        RequestEntity<String> requestEntity = RequestEntity.post("http://localhost:3000/api/student/create")
                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                    .body(jObject.toString(), String.class);
+                                                    .body(studentJsonObjectString);
 
-        ResponseEntity<String> response = restTemplate.exchange(request, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
+        
+        String response = responseEntity.getBody();
         return response;
     }
 
 
 
-
     public List<Student> getApiStudentList(){
         
-        ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:3000/api/student/studentList", String.class);
-        String responsebody = response.getBody();
-        
-        StringReader sr = new StringReader(responsebody);
-        JsonReader jr = Json.createReader(sr);
-        JsonArray jsonArray = jr.readArray();
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity("http://localhost:3000/api/student/studentList", String.class);
+        String response = responseEntity.getBody();
+
+        JsonReader reader = Json.createReader(new StringReader(response));
+        JsonArray jsonArray = reader.readArray();
 
         List<Student> studentList = new ArrayList<>();
+        for(int i=0; i<jsonArray.size(); i++){
+            JsonObject studentJson = jsonArray.getJsonObject(i);
 
-        for (int i = 0; i<jsonArray.size(); i++){
-            JsonObject jsonObject = jsonArray.getJsonObject(i);
-            
-            Integer id = jsonObject.getInt("id");
-            String fullName = jsonObject.getString("fullName");
-            String email = jsonObject.getString("email");
-            String phoneNumber = jsonObject.getString("phoneNumber");
+            Integer id = studentJson.getInt("id");
+            String fullName = studentJson.getString("fullName");
+            String email = studentJson.getString("email");
+            String phoneNumber = studentJson.getString("phoneNumber");
 
-            Student student = new Student(id, fullName, email, phoneNumber);
+            Student student = new Student(id,fullName,email,phoneNumber);
             studentList.add(student);
-            
         }
-
-        return studentList;       
+        return studentList;
 
     }
 

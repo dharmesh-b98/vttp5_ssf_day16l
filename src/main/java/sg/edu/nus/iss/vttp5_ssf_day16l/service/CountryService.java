@@ -4,7 +4,6 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,6 +13,7 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 import jakarta.json.JsonValue;
+import sg.edu.nus.iss.vttp5_ssf_day16l.constant.Url;
 import sg.edu.nus.iss.vttp5_ssf_day16l.model.Country;
 
 @Service
@@ -22,27 +22,26 @@ public class CountryService {
     RestTemplate restTemplate = new RestTemplate();
 
     public List<Country> getApiCountryList(){
-                
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity("https://api.first.org/data/v1/countries", String.class);
-        String jsonString = responseEntity.getBody();
+        ResponseEntity<String> countryRawJsonStringEntity = restTemplate.getForEntity(Url.countryUrl, String.class);
+        String countryRawJsonString = countryRawJsonStringEntity.getBody();
+        
+        JsonReader reader = Json.createReader(new StringReader(countryRawJsonString));
+        JsonObject countryRawJsonObject = reader.readObject();
 
-        StringReader sr = new StringReader(jsonString);
-        JsonReader jr = Json.createReader(sr);
-        JsonObject jsonObject = jr.readObject();
+        JsonObject countryDataJsonObject = countryRawJsonObject.getJsonObject("data");
 
         List<Country> countryList = new ArrayList<>();
-        JsonObject data = jsonObject.getJsonObject("data");
-        Set<Entry<String,JsonValue>> entrySet = data.entrySet();
-        for (Entry<String,JsonValue> entry : entrySet){
-            String code = entry.getKey();
-            JsonObject country_region = entry.getValue().asJsonObject();  //IMPT to convert JSON value to JSON object
-            String name = country_region.getString("country");
-            
+        for (Entry<String,JsonValue> countryEntry : countryDataJsonObject.entrySet()){
+            String code = countryEntry.getKey();
+            JsonObject countrydetails = countryEntry.getValue().asJsonObject(); //IMPT to convert JSON value to JSON object
+
+            String name = countrydetails.getString("country"); //Cannot use getValue() here ****
+
             Country country = new Country(code, name);
             countryList.add(country);
         }
-        
-        return countryList;       
-        
-    }
+        return countryList;
+
+    }        
+    
 }

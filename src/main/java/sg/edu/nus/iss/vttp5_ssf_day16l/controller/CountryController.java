@@ -20,7 +20,7 @@ public class CountryController {
     CountryService countryService;
 
     @ResponseBody
-    @GetMapping("countryList")
+    @GetMapping("/countryList")
     public List<Country> getApiCountryList(Model model){
         
         List<Country> countryList = countryService.getApiCountryList();
