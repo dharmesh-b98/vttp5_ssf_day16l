@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -71,6 +72,27 @@ public class StudentRestController{
         //return  ResponseEntity.ok().body(JsonString);
         return responseEntity;
 
+    }
+
+
+    //CAN IGNORE BELOW THISS
+
+
+    // urlencoded example
+    @PostMapping("/create_Try_URLencodedForm") //requestbody plus multivalueMap
+    public ResponseEntity<String> createPerson_Try_URLencodedForm(@RequestBody MultiValueMap<String,String> entity){ //looking for json in string format as the input
+        
+        Integer id = Integer.parseInt(entity.getFirst("id")); //getFirst instead of getString etc
+        String fullName = entity.getFirst("fullName");
+        String email = entity.getFirst("email");
+        String phoneNumber = entity.getFirst("phoneNumber");
+
+        Student student = new Student(id,fullName,email,phoneNumber);
+        studentRestService.addPerson(Constants.studentKey,student);
+        
+        ResponseEntity<String> responseEntity = ResponseEntity.status(HttpStatus.CREATED).body("complete");
+
+        return responseEntity;
     }
 
 }

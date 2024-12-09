@@ -43,5 +43,14 @@ public class StudentController {
         return "studentList";
     }
 
+    //CAN IGNORE BELOW THIS
+
+    @GetMapping("/create_Try_URLencodedForm") //Getmapping instead of post mapping
+    public String postCreateStudent_Try_URLencodedForm(){
+        String response = studentService.createApiStudent_Try_URLencodedForm();
+        System.out.println("\n\n\n\n" + response + "\n\n\n\n");
+        return "redirect:/student/studentList";
+    }
+
     
 }
