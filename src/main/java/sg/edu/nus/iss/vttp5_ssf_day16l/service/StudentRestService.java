@@ -21,7 +21,7 @@ public class StudentRestService { //getting info from the redis database into th
     }
 
     public boolean delete(String key, Integer id){
-        return studentRepo.deleteItem(key, id);
+        return studentRepo.deleteItem(key,id);
     }
 
     public List<Student> findAll(String key){

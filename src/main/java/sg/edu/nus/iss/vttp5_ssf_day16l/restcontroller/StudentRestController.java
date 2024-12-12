@@ -3,11 +3,15 @@ package sg.edu.nus.iss.vttp5_ssf_day16l.restcontroller;
 import java.io.StringReader;
 import java.util.List;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -71,6 +75,22 @@ public class StudentRestController{
         ResponseEntity<String> responseEntity = ResponseEntity.status(HttpStatus.FOUND).body(studentJsonArrayString);
         //return  ResponseEntity.ok().body(JsonString);
         return responseEntity;
+
+    }
+
+    @DeleteMapping(path = "/delete/{id}")
+    public ResponseEntity<String> deleteMapping(@PathVariable("id") String id){
+        
+        Boolean deleted = studentRestService.delete(Constants.studentKey, Integer.parseInt(id));
+        
+        if (deleted){
+            ResponseEntity<String> response = ResponseEntity.status(HttpStatusCode.valueOf(200)).body(id + " deleted");
+            return response;
+        }
+        else {
+            ResponseEntity<String> response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("could not find " + id);
+            return response;
+        }
 
     }
 

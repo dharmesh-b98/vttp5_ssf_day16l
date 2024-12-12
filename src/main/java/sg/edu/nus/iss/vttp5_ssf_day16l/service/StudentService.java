@@ -4,7 +4,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-
+import org.apache.catalina.connector.Request;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
+import org.springframework.web.util.UriBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
@@ -71,6 +72,15 @@ public class StudentService { //getting info from the restcontroller
         }
         return studentList;
 
+    }
+
+    public String deleteStudent(String id){
+        //String url = UriComponentsBuilder.fromUriString("http://localhost:3000/api/student/delete").toUriString();
+        RequestEntity<Void> request = RequestEntity.delete("http://localhost:3000/api/student/delete/" + id).build();
+
+        ResponseEntity<String> response = restTemplate.exchange(request, String.class);
+
+        return response.getBody();
     }
 
     //CAN IGNORE BELOW
